@@ -1,0 +1,276 @@
+<h1>EPUB Browser-Friendly Format</h1>
+
+<pre class='metadata'>
+Shortname: epub-bff
+Level: 1
+Status: ED
+Work Status: Exploring
+Group: epub
+Repository: dauwhe/epub31-bff
+ED: https://dauwhe.github.io/epub31-bff/Overview.html
+Editor: Dave Cramer, Hachette Book Group, dave.cramer@hbgusa.com
+Editor: Hadrien Gardeur, Feedbooks, hadrien.gardeur@feedbooks.com
+Editor: Ivan Herman, W3C, ivan@w3.org
+
+Abstract: In order to more closely align EPUB with web technologies, we propose a new EPUB format, based on uncompressed web content documents and a JSON manifest file. 
+</pre>
+
+<h2 id="intro">
+Introduction and Example</h2>
+
+  EPUB exists because the web doesn't allow us to easily speak about collections of documents. 
+  Web documents can link to each other, 
+  and link relations let you say a few things about what's on the other end of a link. 
+  But you can't say two documents are part of a larger entity. 
+  You can't say this metadata applies to a group of documents.
+
+  Yet EPUB as it exists today is not directly usable by a web browser. 
+  The web-friendly content files are inside a zip package, 
+  which also contains container and package files expressed in a custom XML vocabulary. 
+
+  The goal of a browser-friendly format (henceforth EPUB-BFF) is to make it easier 
+  for web developers to display EPUB content by:
+
+    1. allowing an unzipped ("exploded") publication
+
+    2. providing an alternative JSON serialization of the information in container.xml and the package document(s).
+
+  Issue: Investigate <a href="https://hjson.org">HJSON</a> as possible serialization format. 
+
+  
+
+  <div class=example>
+    <pre>
+    {
+      "metadata": {
+        "title": "Moby-Dick",
+        "identifier": "978031600000X",
+        "language": "en",
+        "modified": "2015-09-29T17:00:00Z"
+      },
+
+      "spine": [{
+        "href": "cover.jpg",
+        "media-type": "image/jpeg",
+        "properties": "cover-image"
+      }, {
+        "href": "map.svg",
+        "media-type": "image/svg+xml"
+      }, {
+        "href": "c001.html",
+        "media-type": "text/html"
+      }, {
+        "href": "c002.html",
+        "media-type": "text/html"
+      }],
+
+      "resources": [{
+        "href": "style.css",
+        "media-type": "text/css"
+      }, {
+        "href": "whale.jpg",
+        "media-type": "image/jpeg"
+      }, {
+        "href": "boat.svg",
+        "media-type": "image/svg+xml"
+      }, {
+        "href": "notes.html",
+        "media-type": "text/html",
+        "title": "Notes from the editor"
+      }]
+    }
+    </pre>
+  </div>
+
+<h2 id="package">
+The JSON Package File</h2>
+
+  "Classic EPUB" uses container.xml and one or more package documents to describe the nature of the publication. EPUB-BFF instead uses a single JSON package file.
+
+
+<h3 id=data-model>
+Data Model</h3>
+
+
+<h4>Publication</h4>
+  <pre class='railroad'>
+			T: {
+			N: metadata
+			Choice:
+				Seq:
+					N: spine
+					Opt:
+						N: resources
+					Opt:
+						N: links
+				OneOrMore: 
+					N: rendition
+			T: }
+			</pre>
+
+  An EPUB Publication consists of metadata and one or more renditions. A rendition consists of optional metadata, a spine with at least one item, optional resources, and optional links. If a publication contains a single rendition, the rendition array can be omitted. 
+
+
+
+<h4>
+Renditions</h4>
+
+  <pre class='railroad'>
+			T: {
+			N: metadata
+			Seq:
+				N: spine
+				Opt:
+					N: resources
+				Opt:
+					N: links
+			T: }
+			</pre>
+
+<h4>
+Metadata</h4>
+  <pre class='railroad'>
+			T: {
+			Seq:
+				N: title
+				T: language
+				N: identifier
+				T: modified
+				Opt:
+					OneOrMore:
+						N: any other property
+			T: }
+			</pre>
+
+
+<h4>
+Spine, Resources, Links</h4>
+
+
+  The ''spine'', ''resources'', and ''links'' elements consist of an array of link objects, which are the fundamental building blocks of EPUB-BFF. A link object is a collection of key-value pairs describing a resource, which may be internal or external. 
+
+
+  <pre class='railroad'>
+			T: {
+			Seq:
+				T: href
+				T: type
+				Opt:
+					T: rel
+				Opt:
+					T: properties
+				Opt:
+					T: templated
+			T: }
+			</pre>
+
+<table class="propdef">
+<tr>
+<th>Name</th>
+<th>Value</th>
+<th>Format</th>
+<th>Required?</th>
+</tr>
+
+<tr>
+<td>href</td>
+<td>link location</td>
+<td>URI</td>
+<td>Yes</td>
+</tr>
+
+<tr>
+<td>type</td>
+<td>MIME type of resource</td>
+<td>MIME media type</td>
+<td>Yes</td>
+</tr>
+
+<tr>
+<td>rel</td>
+<td>relationship</td>
+<td>tk</td>
+<td>No</td>
+</tr>
+
+<tr>
+<td>properties</td>
+<td>properties associated with the linked resource</td>
+<td>see <a href="http://www.idpf.org/epub/301/spec/epub-publications.html#sec-item-property-values">list of property values</a></td>
+<td>No</td>
+</tr>
+
+
+<tr>
+<td>templated</td>
+<td>indicates linked resource is a URI template</td>
+<td>boolean</td>
+<td>No</td>
+</tr>
+
+
+</table>
+
+
+
+<h3 id=single-rendition>
+Single-rendition publications</h3>
+
+  A single-rendition publication consists of metadata, a spine, optional resources, and optional links. 
+
+
+
+
+<h4 id=metadata>
+Metadata</h4>
+
+<h4 id=spine>
+Spine</h4>
+
+The spine serves the same function as in EPUB Classic. But instead of being an ordered list of itemrefs, 
+
+
+
+<h3 id=multiple-renditions>
+Multiple-rendition publications</h3>
+
+
+
+<h2 id="packaging">
+Packaging</h2>
+
+  Ordinary EPUBs must be packaged in an EPUB Container as defined in [[OCF31]]. 
+  EPUB-BFF is not defined in a packaged state (although this may change in the future), 
+  but exists only as a file system container.  The EPUB-BFF JSON package file 
+  may be included in an ordinary packaged EPUB if referenced properly, 
+  but reading systems have no obligation to read the JSON package file in this context.
+
+
+
+<h2 id="linked-data">
+Linked data</h2>
+
+
+
+
+<h2 id="content-documents">
+Content documents</h2>
+
+  EPUB-BFF content documents follow the usual rules of EPUB 3.1.
+
+<h3 id="associating">
+  Associating a JSON package document with an EPUB-BFF content document</h3>
+
+  To indicate that an EPUB-BFF content document is associated with a particular JSON package document, 
+  use a <a>link</a> element in the HTML <a>head</a>:
+
+  <pre>
+    &lt;link href="manifest.pwp" rel="manifest" type="application/epub+json">
+  </pre>
+
+
+
+<h2 id=acknowledgements>
+Acknowledgments</h2>
+
+  Daniel Glazman, Ivan Herman, Bill McCoy, Tzviya Siegman

@@ -1,0 +1,38 @@
+    {
+      "metadata": {
+        "title": "Moby-Dick",
+        "identifier": "978031600000X",
+        "language": "en",
+        "modified": "2015-09-29T17:00:00Z"
+      },
+
+      "spine": [{
+        "href": "cover.jpg",
+        "media-type": "image/jpeg",
+        "properties": "cover-image"
+      }, {
+        "href": "map.svg",
+        "media-type": "image/svg+xml"
+      }, {
+        "href": "c001.html",
+        "media-type": "text/html"
+      }, {
+        "href": "c002.html",
+        "media-type": "text/html"
+      }],
+
+      "resources": [{
+        "href": "style.css",
+        "media-type": "text/css"
+      }, {
+        "href": "whale.jpg",
+        "media-type": "image/jpeg"
+      }, {
+        "href": "boat.svg",
+        "media-type": "image/svg+xml"
+      }, {
+        "href": "notes.html",
+        "media-type": "text/html",
+        "title": "Notes from the editor"
+      }]
+    }
