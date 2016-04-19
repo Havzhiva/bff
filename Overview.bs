@@ -10,7 +10,6 @@ Repository: dauwhe/epub31-bff
 ED: https://dauwhe.github.io/epub31-bff/Overview.html
 Editor: Dave Cramer, Hachette Book Group, dave.cramer@hbgusa.com
 Editor: Hadrien Gardeur, Feedbooks, hadrien.gardeur@feedbooks.com
-Editor: Ivan Herman, W3C, ivan@w3.org
 
 Abstract: In order to more closely align EPUB with web technologies, we propose a new EPUB format, based on uncompressed web content documents and a JSON manifest file. 
 </pre>
@@ -35,7 +34,7 @@ Introduction and Example</h2>
 
     2. providing an alternative JSON serialization of the information in container.xml and the package document(s).
 
-  Issue: Investigate <a href="https://hjson.org">HJSON</a> as possible serialization format. 
+  Issue: Investigate <a href="https://hjson.org">HJSON</a> and <a href="http://yaml.org/spec/1.2/spec.html">YAML</a> as possible serialization formats. 
 
   
 
@@ -147,7 +146,7 @@ Metadata</h4>
 Spine, Resources, Links</h4>
 
 
-  The ''spine'', ''resources'', and ''links'' elements consist of an array of link objects, which are the fundamental building blocks of EPUB-BFF. A link object is a collection of key-value pairs describing a resource, which may be internal or external. 
+  The ''spine'', ''resources'', and ''links'' elements each consist of an array of link objects, which are the fundamental building blocks of EPUB-BFF. A link object is a collection of key-value pairs describing a resource, which may be internal or external. 
 
 
   <pre class='railroad'>
